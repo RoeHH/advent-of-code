@@ -1,7 +1,7 @@
 use std::{fs, borrow::BorrowMut};
 
 pub fn day(challenge: u8) {
-    let contents = fs::read_to_string("./data/1.txt")
+    let contents = fs::read_to_string("../data/1.txt")
         .expect("Should have been able to read the file");
     let contents = contents.split("\n")
                             .map(|line| {
