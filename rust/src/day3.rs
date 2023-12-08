@@ -83,7 +83,7 @@ fn p2(lines: Vec<Vec<&str>>) -> i32 {
                         adjacent_numbers[0] * adjacent_numbers[1]
                     )
                 }
-            } 
+            }
         }
     }
     return sum;
@@ -97,7 +97,7 @@ fn get_adjacent_numbers(lines: &Vec<Vec<&str>>, x: usize, y: usize) -> Vec<i32> 
         get_three_digit_num_from_pos(lines, x, y - 1, false),
         get_three_digit_num_from_pos(lines, x + 1, y - 1, true),
         get_three_digit_num_from_pos(lines, x - 3, y, false),
-        get_three_digit_num_from_pos(lines, x,  y, false),
+        get_three_digit_num_from_pos(lines, x, y, false),
         get_three_digit_num_from_pos(lines, x + 1, y, true),
         get_three_digit_num_from_pos(lines, x - 1, y + 1, false),
         get_three_digit_num_from_pos(lines, x - 2, y + 1, false),
