@@ -1,4 +1,4 @@
-import lcm from "npm:compute-lcm"
+import {lcmn} from "npm:gcdlcm.js";
 
 const [instructions, ...input] = Deno
   .readTextFileSync("./data/8.txt")
@@ -32,7 +32,7 @@ function findxxZ(
     }
     iValues.push(i);
   }
-  return lcm(...iValues);
+  return lcmn(...iValues);
 }
 
 function findZZZ(
