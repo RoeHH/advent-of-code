@@ -15,8 +15,8 @@ const kv = input
 
 const directions = instructions.split("") as unknown as ("R" | "L")[];
 
-console.log(`Day 1, challenge 1: ${findZZZ(directions, kv)}`);
-console.log(`Day 1, challenge 2: ${findxxZ(directions, kv)}`);
+console.log(`Day 8, challenge 1: ${findZZZ(directions, kv)}`);
+console.log(`Day 8, challenge 2: ${findxxZ(directions, kv)}`);
 
 function findxxZ(
   directions: ("R" | "L")[],
