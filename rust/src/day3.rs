@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, collections::HashSet, vec};
 
 pub fn day(challenge: u8) {
     let contents =
@@ -47,7 +47,6 @@ fn p1(lines: Vec<Vec<&str>>) -> i32 {
                 .count();
                 if adjacent_symbols_count > 0 {
                     adjacent_symbol = true;
-                } else {
                 }
                 number = number.to_string() + lines[y][x]
             } else if adjacent_symbol {
@@ -68,7 +67,7 @@ fn p1(lines: Vec<Vec<&str>>) -> i32 {
     return sum;
 }
 
-fn p2(lines: Vec<Vec<&str>>) -> i32 {
+fn p2(lines: Vec<Vec<&str>>) -> usize {
     let mut sum = 0;
     for y in 1..(lines.len() - 1) {
         for x in 1..(lines[y].len() - 1) {
@@ -76,12 +75,6 @@ fn p2(lines: Vec<Vec<&str>>) -> i32 {
                 let adjacent_numbers = get_adjacent_numbers(&lines, x, y);
                 if adjacent_numbers.len() == 2 {
                     sum += adjacent_numbers[0] * adjacent_numbers[1];
-                    println!(
-                        "{}*{}={} ",
-                        adjacent_numbers[0],
-                        adjacent_numbers[1],
-                        adjacent_numbers[0] * adjacent_numbers[1]
-                    )
                 }
             } 
         }
@@ -89,55 +82,38 @@ fn p2(lines: Vec<Vec<&str>>) -> i32 {
     return sum;
 }
 
-fn get_adjacent_numbers(lines: &Vec<Vec<&str>>, x: usize, y: usize) -> Vec<i32> {
-    let possible_adjacent_numbers = vec![
-        get_three_digit_num_from_pos(lines, x - 1, y - 1, false),
-        get_three_digit_num_from_pos(lines, x - 2, y - 1, false),
-        get_three_digit_num_from_pos(lines, x - 3, y - 1, false),
-        get_three_digit_num_from_pos(lines, x, y - 1, false),
-        get_three_digit_num_from_pos(lines, x + 1, y - 1, true),
-        get_three_digit_num_from_pos(lines, x - 3, y, false),
-        get_three_digit_num_from_pos(lines, x,  y, false),
-        get_three_digit_num_from_pos(lines, x + 1, y, true),
-        get_three_digit_num_from_pos(lines, x - 1, y + 1, false),
-        get_three_digit_num_from_pos(lines, x - 2, y + 1, false),
-        get_three_digit_num_from_pos(lines, x - 3, y + 1, false),
-        get_three_digit_num_from_pos(lines, x, y + 1, false),
-        get_three_digit_num_from_pos(lines, x + 1, y + 1, true),
-    ];
-    return possible_adjacent_numbers
+fn get_adjacent_numbers(lines: &Vec<Vec<&str>>, x: usize, y: usize) -> Vec<usize> {
+    let mut possible_adjacent_numbers = HashSet::<(usize, usize)>::new();
+    let _: Vec<_> = vec![(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x - 1, y), (x + 1, y), (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)]
         .iter()
-        .filter(|n| {
-            n.chars().all(char::is_numeric) && // Check if it's a numeric string
-            !possible_adjacent_numbers.iter().any(|m| {
-                m != n.to_owned() && m.contains(n.to_owned())
-            })
+        .map(|(map_x, map_y)| get_start_pos_from_pos(lines, map_x, map_y).inspect(|pos| {
+            possible_adjacent_numbers.insert(*pos);        
+        }))
+        .collect();
+    return possible_adjacent_numbers.into_iter()
+        .map(|(x, y)| {
+            let mut num = String::from(lines[y][x]);
+            let mut x = x + 1;
+            while lines[y][x].chars().all(char::is_numeric) {
+                num.push_str(lines[y][x]);
+                x += 1;
+            }
+            return num.parse::<usize>().expect("Should be a Number");
         })
-        .map(|n| n.parse::<i32>().expect("Should be a Number"))
-        .collect::<Vec<i32>>();
+    .collect::<Vec<usize>>()
 }
 
-fn get_three_digit_num_from_pos(
+fn get_start_pos_from_pos(
     lines: &Vec<Vec<&str>>,
-    x: usize,
-    y: usize,
-    left_side: bool,
-) -> String {
-    if x < 1 || y < 1 || x > lines[y].len() - 1 || y > lines.len() - 1 {
-        return "Out of Bounds".to_string();
+    x: &usize,
+    y: &usize
+) -> Option<(usize, usize)> {
+    let mut x = x.to_owned();
+    if !lines[*y][x].chars().all(char::is_numeric) {
+        return None;
     }
-    let mut possible_number: String = "".to_string();
-    for i in 0..3 {
-        possible_number = possible_number.to_string() + lines[y][x + i]
+    while lines[*y][x-1].chars().all(char::is_numeric) {
+        x -= 1;        
     }
-    if possible_number.chars().all(char::is_numeric) {
-        return possible_number;
-    }
-    let mut possible_number: String = "".to_string();
-    if left_side {
-        for i in 1..3 {
-            possible_number = possible_number.to_string() + lines[y][x + i]
-        }
-    }
-    return possible_number;
+    return Some((x, *y));
 }
